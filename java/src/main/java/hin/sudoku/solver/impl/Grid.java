@@ -29,16 +29,17 @@ public class Grid {
 		this.grid = new Cell[sideLength][sideLength];
 
 		for (int row = 0; row < sideLength; ++row) {
-			final var curRowGroup = new LinearGroup("row-" + row, groupSize);
+			final var rowCol = new Coordinate(0, row);
+			final var curRowGroup = new LinearGroup(rowCol, "row-" + row, groupSize);
 			rowGroups.put(row, curRowGroup);
 			for (int col = 0; col < sideLength; ++col) {
 				final var regionGroupX = (col / groupLength) * groupLength;
 				final var regionGroupY = (row / groupLength) * groupLength;
 				final var regionCoord = new Coordinate(regionGroupX, regionGroupY);
-				final var curRegionGroup = this.regionGroups.computeIfAbsent(regionCoord, (coord) -> new Group("region" + coord, groupSize));
+				final var curRegionGroup = this.regionGroups.computeIfAbsent(regionCoord, (coord) -> new Group(coord, "region" + coord, groupSize));
 
 				final var curCol = col;
-				final var curColGroup = this.colGroups.getIfAbsentPut(col, () -> new LinearGroup("col-" + curCol, groupSize));
+				final var curColGroup = this.colGroups.getIfAbsentPut(col, () -> new LinearGroup(new Coordinate(curCol, 0), "col-" + curCol, groupSize));
 				this.grid[row][col] = new Cell(new Coordinate(col, row), groupSize, curRowGroup, curColGroup, curRegionGroup);
 			}
 		}
@@ -70,6 +71,8 @@ public class Grid {
 		System.out.printf("%n=======%nBefore%n%s", this);
 		while (!isSolved()) {
 			++iterationCount;
+			if (iterationCount > 100)
+				return -1 * iterationCount;
 			try {
 				boolean cellChanged = confirmSolvedCells();
 				final boolean regionChanged = solveGroup(this.regionGroups.values());
@@ -101,7 +104,7 @@ public class Grid {
 	}
 
 	private boolean solveGroup(final Iterable<? extends Group> groupsToSolve) {
-		final AtomicBoolean groupChanged = new AtomicBoolean(false);
+		final var groupChanged = new AtomicBoolean(false);
 		groupsToSolve.forEach(g -> {
 			final boolean changed = g.solveRemaining();
 			if (changed)

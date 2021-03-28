@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 @EqualsAndHashCode(of = {"coord"})
 public class Cell implements Comparable<Cell> {
 	private final Coordinate coord;
+	@Getter
 	private final MutableIntSet candidateValues;
 	private final String toStringFormat;
 	private final String paddingString;
@@ -62,7 +63,6 @@ public class Cell implements Comparable<Cell> {
 
 	public int answer() {
 		if (!isSet()) {
-
 			final var msg = String.format("Cell %s: Asking for answer but with possible values : %s", this.coord, this.candidateValues);
 			throw new IllegalStateException(msg);
 		}

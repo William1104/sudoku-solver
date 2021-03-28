@@ -2,43 +2,25 @@ package hin.sudoku.solver.impl;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toList;
-
 public class LinearGroup extends Group {
-	public LinearGroup(String designation, int range) {
-		super(designation, range);
+	public LinearGroup(final Coordinate headCoord, final String designation, final int range) {
+		super(headCoord, designation, range);
 	}
 
 	@Override
 	public boolean solveRemaining() {
 		if (this.isSolved())
 			return true;
-		final AtomicBoolean valueUpdated = new AtomicBoolean(false);
+
+		final var candidateEliminated = new AtomicBoolean(false);
 		this.unsolvedValues.forEach(v -> {
-			final var candidateByRegion = this.cells.stream()
-					.filter(c -> !c.isSet())
-					.filter(c -> c.isCandidateForCell(v))
-					.collect(groupingBy(Cell::getRegionGroup));
-
-			if (1 == candidateByRegion.size()) {
-				final var sharedRegionGroup = candidateByRegion.keySet().iterator().next();
-				final var cellsFromOtherGroups = this.cells.stream()
-						.filter(c -> !c.isSet())
-						.filter(c -> !sharedRegionGroup.equals(c.getRegionGroup()))
-						.collect(toList());
-
-				final AtomicBoolean cellChanged = new AtomicBoolean(false);
-				cellsFromOtherGroups.forEach(c -> {
-					final var changed = c.removeCandidateValue(v);
-					if (changed)
-						cellChanged.set(true);
-				});
-
-				if (cellChanged.get())
-					valueUpdated.set(true);
-			}
+			// if the candidate cells for a given value is only residing within a certain region group
+			// we can remove that candidate value from other cells
+			final var regionGroupUpdated = eliminateCandidateByGroup(v, Cell::getRegionGroup);
+			if (regionGroupUpdated)
+				candidateEliminated.set(true);
 		});
-		return super.solveRemaining() || valueUpdated.get();
+		final var cellConfirmed = confirmSingleCandidateCells();
+		return super.solveRemaining() || candidateEliminated.get() || cellConfirmed;
 	}
 }

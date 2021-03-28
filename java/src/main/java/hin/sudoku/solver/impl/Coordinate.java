@@ -25,9 +25,7 @@ public class Coordinate implements Comparable<Coordinate> {
 
 	@Override
 	public int compareTo(final Coordinate o) {
-		int comp = this.getX() - o.getX();
-		if (0 != comp)
-			return comp;
-		return this.getY() - o.getY();
+		int comp = this.getY() - o.getY();
+		return (0 != comp) ? comp : (this.getX() - o.getX());
 	}
 }
