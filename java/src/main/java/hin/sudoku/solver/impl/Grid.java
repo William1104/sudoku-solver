@@ -68,24 +68,29 @@ public class Grid {
 
 	public int solve() {
 		int iterationCount = 0;
-		System.out.printf("%n=======%nBefore%n%s", this);
-		while (!isSolved()) {
+		System.out.printf("=======%nBefore%n%s%n", this);
+		do {
 			++iterationCount;
-			if (iterationCount > 100)
+			if (iterationCount > 100) {
+				System.err.println("=======%nSolve-loop got stuck%n");
 				return -1 * iterationCount;
+			}
 			try {
 				boolean cellChanged = confirmSolvedCells();
 				final boolean regionChanged = solveGroup(this.regionGroups.values());
 				final boolean rowsChanged = solveGroup(this.rowGroups);
 				final boolean colsChanged = solveGroup(this.colGroups);
-				if (cellChanged || regionChanged || rowsChanged || colsChanged)
-					continue;
-				return -1 * iterationCount;
+
+				if (!(cellChanged || regionChanged || rowsChanged || colsChanged))
+					break;
 			} finally {
-				System.out.printf("%n=======%nIteration %d%n%s", iterationCount, this);
+				System.out.printf("=======%nIteration %d%n%s%n", iterationCount, this);
 			}
-		}
-		return iterationCount;
+		} while(! isSolved());
+		if (this.isSolved())
+			return iterationCount;
+
+		return -1 * iterationCount;
 	}
 
 	private boolean confirmSolvedCells() {
