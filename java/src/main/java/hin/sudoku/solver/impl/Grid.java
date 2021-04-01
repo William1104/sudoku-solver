@@ -10,6 +10,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Grid {
 	private final int groupSize;
+	@Getter
 	private final Cell[][] grid;
 	@Getter(AccessLevel.PUBLIC)
 	private final IntObjectHashMap<LinearGroup> colGroups = new IntObjectHashMap<>();
@@ -68,24 +69,19 @@ public class Grid {
 
 	public int solve() {
 		int iterationCount = 0;
-		System.out.printf("=======%nBefore%n%s%n", this);
 		do {
 			++iterationCount;
 			if (iterationCount > 100) {
 				System.err.println("=======%nSolve-loop got stuck%n");
 				return -1 * iterationCount;
 			}
-			try {
-				boolean cellChanged = confirmSolvedCells();
-				final boolean regionChanged = solveGroup(this.regionGroups.values());
-				final boolean rowsChanged = solveGroup(this.rowGroups);
-				final boolean colsChanged = solveGroup(this.colGroups);
+			boolean cellChanged = confirmSolvedCells();
+			final boolean regionChanged = solveGroup(this.regionGroups.values());
+			final boolean rowsChanged = solveGroup(this.rowGroups);
+			final boolean colsChanged = solveGroup(this.colGroups);
 
-				if (!(cellChanged || regionChanged || rowsChanged || colsChanged))
-					break;
-			} finally {
-				System.out.printf("=======%nIteration %d%n%s%n", iterationCount, this);
-			}
+			if (!(cellChanged || regionChanged || rowsChanged || colsChanged))
+				break;
 		} while(! isSolved());
 		if (this.isSolved())
 			return iterationCount;
