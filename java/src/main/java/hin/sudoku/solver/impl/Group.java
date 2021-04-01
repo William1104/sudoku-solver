@@ -4,13 +4,12 @@ import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
-import org.eclipse.collections.impl.set.mutable.primitive.IntHashSet;
 
+import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.Collections;
-import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
-import java.util.stream.IntStream;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
@@ -19,15 +18,17 @@ import static java.util.stream.Collectors.toList;
 @EqualsAndHashCode(of = {"headCoord"})
 public class Group implements Comparable<Group> {
 	private final String designation;
-	protected final TreeSet<Cell> cells = new TreeSet<>();
+	protected final ArrayList<Cell> cells;
 	@Getter(AccessLevel.PUBLIC)
-	protected final IntHashSet unsolvedValues;
+	protected final BitSet unsolvedValues;
 	private final Coordinate headCoord;
 
 	public Group(final Coordinate headCoord, final String designation, final int range) {
 		this.headCoord = headCoord;
 		this.designation = designation;
-		this.unsolvedValues = new IntHashSet(IntStream.rangeClosed(1, range).toArray());
+		this.unsolvedValues = new BitSet(range);
+		this.unsolvedValues.set(0, range);
+		this.cells = new ArrayList<>(range);
 	}
 
 	public void addCell(final Cell cell) {
@@ -35,13 +36,16 @@ public class Group implements Comparable<Group> {
 	}
 
 	public Iterable<Cell> getCells() {
-		return Collections.unmodifiableSet(cells);
+		return Collections.unmodifiableList(this.cells);
+	}
+
+	private boolean isResolved(final int value) {
+		return !this.unsolvedValues.get(value - 1);
 	}
 
 	public boolean canTake(final int value) {
-		if (!this.unsolvedValues.contains(value))
+		if (isResolved(value))
 			return false;
-
 		return this.cells.stream().allMatch(c -> c.canRemoveCandidate(value));
 	}
 
@@ -50,7 +54,7 @@ public class Group implements Comparable<Group> {
 	}
 
 	public void take(final int value, final Cell source, final Group initiatingGroup) {
-		if (!this.unsolvedValues.contains(value)) {
+		if (isResolved(value)) {
 			final String msg = String.format("Group %s: Trying to take value %d which is already set", this.designation, value);
 			throw new IllegalStateException(msg);
 		}
@@ -68,7 +72,7 @@ public class Group implements Comparable<Group> {
 			}
 		});
 		if (initiatingGroup != this)
-			this.unsolvedValues.remove(value);
+			this.unsolvedValues.clear(value - 1);
 	}
 
 	/**
@@ -80,12 +84,13 @@ public class Group implements Comparable<Group> {
 		if (this.isSolved())
 			return false;
 		final var candidatesEliminated = new AtomicBoolean(false);
-		this.unsolvedValues.forEach(v -> {
+		for (int idx = this.unsolvedValues.nextSetBit(0); idx >= 0; idx = this.unsolvedValues.nextSetBit(idx + 1)) {
+			final int v = idx + 1;
 			boolean colGroupUpdated = eliminateCandidateByGroup(v, Cell::getColGroup);
 			boolean rowGroupUpdated = eliminateCandidateByGroup(v, Cell::getRowGroup);
 			if (colGroupUpdated || rowGroupUpdated)
 				candidatesEliminated.set(true);
-		});
+		}
 		final boolean sharedGroupEliminated = eliminateCandidateByMultipleSharedGroups();
 
 		// confirm any cell with just 1 candidate value which is not set (because candidates are just eliminated)
@@ -141,19 +146,19 @@ public class Group implements Comparable<Group> {
 			Group.this.cells.stream()
 					.filter(c -> !c.isSet())
 					.filter(c -> !cellsWithSameCandidateValues.contains(c))
-					.forEach(c -> candidateValueSet.forEach(v -> {
-						if (c.removeCandidateValue(v))
-							sharedGroupEliminated.set(true);
-					}));
+					.forEach(cell -> {
+						for (int idx = candidateValueSet.nextSetBit(0); idx >= 0; idx = candidateValueSet.nextSetBit(idx + 1))
+							if (cell.removeCandidateValue(idx + 1))
+								sharedGroupEliminated.set(true);
+					});
 		}
 		return sharedGroupEliminated.get();
 	}
 
 	protected boolean confirmSingleCandidateCells() {
 		var cellConfirmed = false;
-		final var iter = this.unsolvedValues.intIterator();
-		while (iter.hasNext()) {
-			final var v = iter.next();
+		for (int idx = this.unsolvedValues.nextSetBit(0); idx >= 0; idx = this.unsolvedValues.nextSetBit(idx + 1)) {
+			final var v = idx + 1;
 			final var candidateCells = this.cells.stream()
 					.filter(c -> !c.isSet())
 					.filter(c -> c.isCandidateForCell(v))
@@ -166,7 +171,7 @@ public class Group implements Comparable<Group> {
 				}
 				theCell.setValue(v, this);
 				cellConfirmed = true;
-				iter.remove();
+				this.unsolvedValues.clear(idx);
 			}
 		}
 		return cellConfirmed;

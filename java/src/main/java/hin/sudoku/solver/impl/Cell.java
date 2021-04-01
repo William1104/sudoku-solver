@@ -2,10 +2,8 @@ package hin.sudoku.solver.impl;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import org.eclipse.collections.api.set.primitive.MutableIntSet;
-import org.eclipse.collections.impl.factory.primitive.IntSets;
 
-import java.util.stream.IntStream;
+import java.util.BitSet;
 
 import static java.util.Objects.requireNonNull;
 
@@ -13,7 +11,7 @@ import static java.util.Objects.requireNonNull;
 public class Cell implements Comparable<Cell> {
 	private final Coordinate coord;
 	@Getter
-	private final MutableIntSet candidateValues;
+	private final BitSet candidateValues;
 	private final String toStringFormat;
 	private final String paddingString;
 
@@ -45,7 +43,8 @@ public class Cell implements Comparable<Cell> {
 		for (int i = 0; i < numDigit; ++i)
 			pad[i] = ' ';
 		this.paddingString = new String(pad);
-		this.candidateValues = IntSets.mutable.withAll(IntStream.rangeClosed(1, range));
+		this.candidateValues = new BitSet(range);
+		this.candidateValues.set(0, range);
 	}
 
 	@Override
@@ -55,8 +54,10 @@ public class Cell implements Comparable<Cell> {
 
 	@Override
 	public String toString() {
-		if (isSet())
-			return String.format(this.toStringFormat, this.candidateValues.max());
+		if (isSet()) {
+			final int value = this.candidateValues.nextSetBit(0) + 1;
+			return String.format(this.toStringFormat, value);
+		}
 		else
 			return this.paddingString;
 	}
@@ -66,7 +67,7 @@ public class Cell implements Comparable<Cell> {
 			final var msg = String.format("Cell %s: Asking for answer but with possible values : %s", this.coord, this.candidateValues);
 			throw new IllegalStateException(msg);
 		}
-		return this.candidateValues.max();
+		return this.candidateValues.nextSetBit(0) + 1;
 	}
 
 	public void setInitialValue(final int value) {
@@ -96,13 +97,14 @@ public class Cell implements Comparable<Cell> {
 			this.rowGroup.take(value, this, initiatingGroup);
 			this.colGroup.take(value, this, initiatingGroup);
 			this.regionGroup.take(value, this, initiatingGroup);
-			this.candidateValues.removeIf(i -> i != value);
+			this.candidateValues.clear();
+			this.candidateValues.set(value - 1);
 			this.isSet = true;
 		}
 	}
 
 	public boolean singleCandidateRemaining() {
-		return 1 == this.candidateValues.size();
+		return 1 == this.candidateValues.cardinality();
 	}
 
 	public int confirmCandidate() {
@@ -110,13 +112,13 @@ public class Cell implements Comparable<Cell> {
 			final var msg = String.format("Cell %s: Attempting to confirm candidate, but with candidate remaining: %s", this.coord, this.candidateValues);
 			throw new IllegalStateException(msg);
 		}
-		final var valueToSet = this.candidateValues.max();
+		final var valueToSet = this.candidateValues.nextSetBit(0) + 1;
 		this.setValue(valueToSet, null);
 		return valueToSet;
 	}
 
 	public boolean canRemoveCandidate(int value) {
-		return !this.isSet() || !this.candidateValues.contains(value);
+		return !this.isSet() || value != this.answer();
 	}
 
 	public boolean removeCandidateValue(final int candidateToRemove) {
@@ -124,10 +126,20 @@ public class Cell implements Comparable<Cell> {
 			final var nsg = String.format("Cell %s: Trying to remove candidate value %d on set cell of same value", this.coord, candidateToRemove);
 			throw new IllegalStateException(nsg);
 		}
-		return this.candidateValues.remove(candidateToRemove);
+
+		final int idx = candidateToRemove - 1;
+		final boolean wasSet = this.candidateValues.get(idx);
+		this.candidateValues.clear(idx);
+		return wasSet;
 	}
 
 	public boolean isCandidateForCell(final int value) {
-		return this.candidateValues.contains(value);
+		if (value > this.candidateValues.size())
+			throw new IllegalArgumentException("value " + value + " is more than acceptable values of 1~" + this.candidateValues.size());
+		return this.candidateValues.get(value - 1);
+	}
+
+	public int numCandidateValues() {
+		return this.candidateValues.cardinality();
 	}
 }
