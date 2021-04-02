@@ -5,10 +5,16 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import org.eclipse.collections.impl.map.mutable.primitive.IntObjectHashMap;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static hin.sudoku.solver.impl.GridUtil.cloneGrid;
+import static hin.sudoku.solver.impl.GridUtil.deepCopy;
+
 public class Grid {
+	private final int groupLength;
 	private final int groupSize;
 	@Getter
 	private final Cell[][] grid;
@@ -20,6 +26,7 @@ public class Grid {
 	private final HashMap<Coordinate, Group> regionGroups = new HashMap<>();
 
 	public Grid(final int groupLength, int[][] initialGrid) {
+		this.groupLength = groupLength;
 		this.groupSize = groupLength * groupLength;
 		Preconditions.checkArgument(initialGrid.length == groupSize, "number of rows != %d^2", groupLength);
 		for (int i = 0; i < initialGrid.length; ++i)
@@ -46,7 +53,7 @@ public class Grid {
 		}
 
 		for (int i = 0; i < initialGrid.length; ++i) {
-			int[] row = initialGrid[i];
+			final var row = initialGrid[i];
 			for (int j = 0; j < row.length; ++j)
 				if (0 < row[j])
 					this.grid[i][j].setInitialValue(row[j]);
@@ -57,7 +64,7 @@ public class Grid {
 	public String toString() {
 		final StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < rowGroups.size(); ++i) {
-			final Group curRow = rowGroups.get(i);
+			final var curRow = rowGroups.get(i);
 			sb.append('|');
 			for (final Cell cell : curRow.getCells()) {
 				sb.append(cell).append('|');
@@ -68,23 +75,61 @@ public class Grid {
 	}
 
 	public int solve() {
-		int iterationCount = 0;
+		return this.solve(0);
+	}
+
+	private int solve(final int initIterationCount) {
+		int iterationCount = initIterationCount;
 		do {
 			++iterationCount;
-			if (iterationCount > 100) {
-				System.err.println("=======%nSolve-loop got stuck%n");
+			try {
+				final var loopCount = iterationCount - initIterationCount;
+				if (loopCount > 82) {
+					System.err.printf("=======%nSolve-loop got stuck%n");
+					return -1 * iterationCount;
+				}
+				final boolean cellChanged = confirmSolvedCells();
+				final boolean regionChanged = solveGroup(this.regionGroups.values());
+				final boolean rowsChanged = solveGroup(this.rowGroups);
+				final boolean colsChanged = solveGroup(this.colGroups);
+
+				if (!(cellChanged || regionChanged || rowsChanged || colsChanged))
+					break;
+			}
+			catch (Throwable t) {
 				return -1 * iterationCount;
 			}
-			boolean cellChanged = confirmSolvedCells();
-			final boolean regionChanged = solveGroup(this.regionGroups.values());
-			final boolean rowsChanged = solveGroup(this.rowGroups);
-			final boolean colsChanged = solveGroup(this.colGroups);
-
-			if (!(cellChanged || regionChanged || rowsChanged || colsChanged))
-				break;
 		} while(! isSolved());
 		if (this.isSolved())
 			return iterationCount;
+
+		final Cell leastCandidateCell = Arrays.stream(this.grid).flatMap(Arrays::stream)
+				.filter(c -> !c.isSet())
+				.min(Comparator.comparingInt(Cell::numCandidateValues)).get();
+		final var coord = leastCandidateCell.getCoord();
+		final int[][] origCloneGrid = cloneGrid(this.grid);
+		for (int idx = leastCandidateCell.getCandidateValues().nextSetBit(0); idx >= 0; idx = leastCandidateCell.getCandidateValues().nextSetBit(idx + 1)) {
+			final int candidateValue = idx + 1;
+			final int[][] cloneGridForTest = deepCopy(origCloneGrid);
+			cloneGridForTest[coord.getRow()][coord.getCol()] = candidateValue;
+			final Grid g = new Grid(this.groupLength, cloneGridForTest);
+			final int newIterationCount = g.solve(iterationCount);
+			// not solved, try next value
+			if (newIterationCount <= 0) {
+				iterationCount = -1 * newIterationCount;
+				continue;
+			}
+			// solved!
+			for (int i = 0 ; i < g.grid.length; ++i ) {
+				final Cell[] row = g.grid[i];
+				for ( int j = 0; j < row.length; ++j ) {
+					if ( !this.grid[i][j].isSet()) {
+						this.grid[i][j].setValue(g.grid[i][j].answer(), null);
+					}
+				}
+			}
+			return newIterationCount;
+		}
 
 		return -1 * iterationCount;
 	}
@@ -107,9 +152,9 @@ public class Grid {
 	private boolean solveGroup(final Iterable<? extends Group> groupsToSolve) {
 		final var groupChanged = new AtomicBoolean(false);
 		groupsToSolve.forEach(g -> {
-			final boolean changed = g.solveRemaining();
-			if (changed)
+			if (! g.isSolved() && g.solveRemaining()) {
 				groupChanged.set(true);
+			}
 		});
 		return groupChanged.get();
 	}

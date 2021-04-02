@@ -1,5 +1,6 @@
 package hin.sudoku.solver;
 
+import hin.sudoku.solver.impl.Grid;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -43,11 +44,22 @@ public class SolverTest {
 				{0, 0, 0, 0, 0, 0, 0, 5, 0},
 				{8, 0, 0, 0, 4, 0, 6, 1, 0}
 		};
-
+		final int[][] hard = {
+				{7, 0, 0, 0, 4, 0, 2, 0, 0},
+				{0, 0, 0, 5, 2, 0, 0, 0, 6},
+				{0, 0, 0, 0, 0, 0, 5, 0, 0},
+				{0, 7, 0, 0, 0, 0, 9, 6, 0},
+				{0, 6, 0, 0, 0, 0, 0, 8, 0},
+				{4, 2, 5, 0, 0, 0, 0, 0, 0},
+				{0, 0, 0, 0, 0, 9, 0, 3, 1},
+				{0, 0, 4, 0, 0, 7, 0, 0, 0},
+				{1, 0, 0, 6, 0, 0, 0, 0, 0}
+		};
 		return Stream.of(
 				Arguments.of(3, g1),
 				Arguments.of(3, g2),
-				Arguments.of(3, g3)
+				Arguments.of(3, g3),
+				Arguments.of(3, hard)
 		);
 	}
 
@@ -55,6 +67,8 @@ public class SolverTest {
 	@MethodSource("grids")
 	public void doTest(final int groupSize, final int[][] grid) {
 		final var solver = new Solver();
-		assertThat(solver.solve(groupSize, grid)).isGreaterThan(0);
+		final Grid solvedGrid = solver.solve(groupSize, grid);
+		assertThat(solvedGrid).describedAs("solved grid").isNotNull();
+		System.out.printf("Solved:%n%s", solvedGrid);
 	}
 }

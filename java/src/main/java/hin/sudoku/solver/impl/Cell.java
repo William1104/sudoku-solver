@@ -9,6 +9,7 @@ import static java.util.Objects.requireNonNull;
 
 @EqualsAndHashCode(of = {"coord"})
 public class Cell implements Comparable<Cell> {
+	@Getter
 	private final Coordinate coord;
 	@Getter
 	private final BitSet candidateValues;
@@ -22,7 +23,6 @@ public class Cell implements Comparable<Cell> {
 	@Getter
 	private final Group regionGroup;
 
-	private boolean isFixed = false;
 	@Getter
 	private boolean isSet = false;
 
@@ -71,25 +71,22 @@ public class Cell implements Comparable<Cell> {
 	}
 
 	public void setInitialValue(final int value) {
-		if (this.isFixed) {
-			final var msg = String.format("Cell %s: Already set!", this.coord);
-			throw new IllegalStateException(msg);
-		}
+		if (this.isSet())
+			throw new IllegalStateException(String.format("Cell %s: Already set!", this.coord));
 		this.setValue(value, null);
-		this.isFixed = true;
 	}
 
 	public void setValue(final int value, final Group initiatingGroup) {
 		if (this.canRemoveCandidate(value)) {
-			if (!this.rowGroup.canTake(value)) {
+			if (this.rowGroup.cannotTake(value)) {
 				final var msg = String.format("%d is already taken in row group %s", value, this.rowGroup);
 				throw new IllegalArgumentException(msg);
 			}
-			if (!this.colGroup.canTake(value)) {
+			if (this.colGroup.cannotTake(value)) {
 				final var msg = String.format("%d is already taken in column group %s", value, this.rowGroup);
 				throw new IllegalArgumentException(msg);
 			}
-			if (!this.regionGroup.canTake(value)) {
+			if (this.regionGroup.cannotTake(value)) {
 				final var msg = String.format("%d is already taken in region group %s", value, this.rowGroup);
 				throw new IllegalArgumentException(msg);
 			}
@@ -107,18 +104,17 @@ public class Cell implements Comparable<Cell> {
 		return 1 == this.candidateValues.cardinality();
 	}
 
-	public int confirmCandidate() {
+	public void confirmCandidate() {
 		if (!singleCandidateRemaining()) {
 			final var msg = String.format("Cell %s: Attempting to confirm candidate, but with candidate remaining: %s", this.coord, this.candidateValues);
 			throw new IllegalStateException(msg);
 		}
 		final var valueToSet = this.candidateValues.nextSetBit(0) + 1;
 		this.setValue(valueToSet, null);
-		return valueToSet;
 	}
 
 	public boolean canRemoveCandidate(int value) {
-		return !this.isSet() || value != this.answer();
+		return !this.isSet() || !this.candidateValues.get(value - 1);
 	}
 
 	public boolean removeCandidateValue(final int candidateToRemove) {

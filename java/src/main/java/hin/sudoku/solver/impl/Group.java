@@ -43,10 +43,10 @@ public class Group implements Comparable<Group> {
 		return !this.unsolvedValues.get(value - 1);
 	}
 
-	public boolean canTake(final int value) {
+	public boolean cannotTake(final int value) {
 		if (isResolved(value))
-			return false;
-		return this.cells.stream().allMatch(c -> c.canRemoveCandidate(value));
+			return true;
+		return !this.cells.stream().allMatch(c -> c.canRemoveCandidate(value));
 	}
 
 	public boolean isSolved() {
@@ -86,8 +86,8 @@ public class Group implements Comparable<Group> {
 		final var candidatesEliminated = new AtomicBoolean(false);
 		for (int idx = this.unsolvedValues.nextSetBit(0); idx >= 0; idx = this.unsolvedValues.nextSetBit(idx + 1)) {
 			final int v = idx + 1;
-			boolean colGroupUpdated = eliminateCandidateByGroup(v, Cell::getColGroup);
-			boolean rowGroupUpdated = eliminateCandidateByGroup(v, Cell::getRowGroup);
+			final boolean colGroupUpdated = eliminateCandidateByGroup(v, Cell::getColGroup);
+			final boolean rowGroupUpdated = eliminateCandidateByGroup(v, Cell::getRowGroup);
 			if (colGroupUpdated || rowGroupUpdated)
 				candidatesEliminated.set(true);
 		}
@@ -140,7 +140,7 @@ public class Group implements Comparable<Group> {
 		for (final var kv : cellsGroupedByCandidateValues.entrySet()) {
 			final var candidateValueSet = kv.getKey();
 			final var cellsWithSameCandidateValues = kv.getValue();
-			if (candidateValueSet.size() != cellsWithSameCandidateValues.size())
+			if (candidateValueSet.cardinality() != cellsWithSameCandidateValues.size())
 				continue;
 
 			Group.this.cells.stream()

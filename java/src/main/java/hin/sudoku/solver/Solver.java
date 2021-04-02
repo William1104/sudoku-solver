@@ -16,27 +16,30 @@ public class Solver {
 //				{0, 0, 0, 0, 0, 0, 0, 0, 0}
 
 		int[][] grid = {
-				{0, 6, 0, 0, 0, 5, 0, 0, 0},
-				{0, 7, 0, 0, 0, 0, 0, 0, 1},
-				{0, 0, 0, 0, 6, 3, 4, 0, 0},
-				{0, 0, 3, 0, 8, 0, 0, 0, 0},
-				{2, 1, 0, 0, 9, 0, 0, 0, 5},
-				{4, 0, 0, 0, 0, 7, 8, 0, 0},
-				{0, 0, 1, 6, 0, 0, 0, 8, 4},
-				{0, 0, 0, 0, 0, 0, 0, 5, 0},
-				{8, 0, 0, 0, 4, 0, 6, 1, 0}
+				{7, 0, 0, 0, 4, 0, 2, 0, 0},
+				{0, 0, 0, 5, 2, 0, 0, 0, 6},
+				{0, 0, 0, 0, 0, 0, 5, 0, 0},
+				{0, 7, 0, 0, 0, 0, 9, 6, 0},
+				{0, 6, 0, 0, 0, 0, 0, 8, 0},
+				{4, 2, 5, 0, 0, 0, 0, 0, 0},
+				{0, 0, 0, 0, 0, 9, 0, 3, 1},
+				{0, 0, 4, 0, 0, 7, 0, 0, 0},
+				{1, 0, 0, 6, 0, 0, 0, 0, 0}
 		};
 
 
 		final var solver = new Solver();
-		final var iterationCount = solver.solve(3, grid);
-		if (iterationCount < 0)
+		final Grid solvedGrid = solver.solve(3, grid);
+		if (null == solvedGrid)
 			System.exit(1);
+		System.out.printf("Solved:%n%s", solvedGrid);
 	}
 
-	public int solve(final int groupSize, final int[][] grid) {
+	public Grid solve(final int groupSize, final int[][] grid) {
 		final Grid g = new Grid(groupSize, grid);
 		final int iterationCount = g.solve();
-		return iterationCount;
+		if (iterationCount > 0)
+			return g;
+		return null;
 	}
 }
