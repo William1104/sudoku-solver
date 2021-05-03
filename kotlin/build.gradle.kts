@@ -33,6 +33,10 @@ dependencies {
     jmh("org.openjdk.jmh:jmh-generator-annprocess:1.29")
 }
 
+tasks.jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
 tasks.test {
     useJUnitPlatform()
 }
