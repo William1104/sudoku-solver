@@ -4,6 +4,7 @@ import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Mode;
 import org.openjdk.jmh.annotations.OutputTimeUnit;
+import org.openjdk.jmh.infra.Blackhole;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
@@ -22,7 +23,7 @@ public class SolverBenchmark {
 	@Benchmark
 	@BenchmarkMode(Mode.AverageTime)
 	@OutputTimeUnit(TimeUnit.MICROSECONDS)
-	public void simplePuzzle() {
+	public void simplePuzzle(final Blackhole blackhole) {
 		final int[][] grid = {
 				{0, 4, 0, 3, 0, 8, 1, 0, 0},
 				{2, 1, 0, 0, 6, 5, 0, 0, 0},
@@ -35,13 +36,13 @@ public class SolverBenchmark {
 				{0, 8, 0, 0, 3, 0, 0, 0, 0}
 		};
 		final var solver = new Solver();
-		solver.solve(3, grid);
+		blackhole.consume(solver.solve(3, grid));
 	}
 
 	@Benchmark
 	@BenchmarkMode(Mode.AverageTime)
 	@OutputTimeUnit(TimeUnit.MICROSECONDS)
-	public void hardPuzzle() {
+	public void hardPuzzle(final Blackhole blackhole) {
 		final int[][] grid = {
 				{7, 0, 0, 0, 4, 0, 2, 0, 0},
 				{0, 0, 0, 5, 2, 0, 0, 0, 6},
@@ -54,6 +55,6 @@ public class SolverBenchmark {
 				{1, 0, 0, 6, 0, 0, 0, 0, 0}
 		};
 		final var solver = new Solver();
-		solver.solve(3, grid);
+		blackhole.consume(solver.solve(3, grid));
 	}
 }
