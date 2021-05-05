@@ -7,12 +7,11 @@ class SimpleCandidateEliminator : CandidateEliminator {
         do {
             stable = true
             for (coord in Coord.all) {
-                val candidatePattern = board.candidatePattern(coord)
-                if (candidatePattern.countOneBits() == 1) {
-                    for (coordGroup in CoordGroup.of(coord)) {
+                for (coordGroup in CoordGroup.all) {
+                    if (board.isConfirmed(coord)) {
                         for (peerCoord in coordGroup.coords) {
-                            val updated = coord != peerCoord &&
-                                    board.eraseCandidatePattern(peerCoord, candidatePattern)
+                            val updated = (coord != peerCoord) &&
+                                    board.eraseCandidatePattern(peerCoord, board.candidatePattern(coord))
                             if (updated) {
                                 anyUpdate = true
                                 stable = false

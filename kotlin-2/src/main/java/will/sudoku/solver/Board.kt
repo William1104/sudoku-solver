@@ -14,7 +14,6 @@ class Board private constructor(val candidatePatterns: IntArray) {
         // candidate masks. it helps to extract the candidate values from candidate pattern
         val masks = (0 until size).map { 1 shl it }.toIntArray()
 
-
         // constructs a Board with known values
         operator fun invoke(values: IntArray): Board {
             val candidatePatternForWildcard = (1 shl size) - 1
@@ -54,12 +53,23 @@ class Board private constructor(val candidatePatterns: IntArray) {
         return symbols[value(coord)]
     }
 
+    fun isConfirmed(coord:Coord) : Boolean {
+        return masks.any { candidatePattern(coord) == it }
+    }
+
     fun isValid(): Boolean {
-        return Coord.all.none { candidatePatterns[it.index] == 0 }
+        return Coord.all.none { candidatePatterns[it.index] == 0 } &&
+                CoordGroup.all.none { group ->
+                    group.coords
+                        .filter {isConfirmed(it) }
+                        .groupingBy {candidatePattern(it) }
+                        .eachCount()
+                        .any {it.value > 1}
+                }
     }
 
     fun isSolved(): Boolean {
-        return Coord.all.none { value(it) == 0 }
+        return Coord.all.all { isConfirmed(it)}
     }
 
     //
@@ -96,7 +106,7 @@ class Board private constructor(val candidatePatterns: IntArray) {
     }
 
     // return the candidate pattern as a list of value
-    fun candidatePatternValue(coord: Coord): IntArray {
+    fun candidateValues(coord: Coord): IntArray {
         val candidate = candidatePattern(coord)
         return (0 until size).filter {
             candidate and masks[it] > 0
@@ -134,8 +144,9 @@ class Board private constructor(val candidatePatterns: IntArray) {
     //
     // methods for getting unsolved coord ---------------------
     // this method should be handled by another delegated class for move selection later
-    fun unresolvedCoord(): Coord {
-        return Coord.all.first { value(it) == 0 }
+    fun unresolvedCoord(): Coord? {
+        return Coord.all.filterNot { isConfirmed(it) }
+            .minByOrNull { candidatePattern(it).countOneBits() }
     }
 
 

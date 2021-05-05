@@ -17,11 +17,11 @@ class BoardReader {
         }
 
 
-        private fun readBoard(inputStream: InputStream): Board {
+        fun readBoard(inputStream: InputStream): Board {
             val values = inputStream.bufferedReader()
                 .readLines()
                 .flatMap {
-                    it.map { c -> symbols.indexOf(c) }.filterNot { v -> v != -1 }
+                    it.map { c -> symbols.indexOf(c) }.filterNot { v -> v < 0 }
                 }
                 .toIntArray()
             return Board(values)
