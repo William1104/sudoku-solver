@@ -9,33 +9,25 @@ class Solver {
     }
 
     fun solve(board: Board, depth: Int): Board? {
+        if (!board.isValid()) return null
         if (board.isSolved()) return board
 
         val moves = sequence {
-            val unresolvedCoord = board.unresolvedCoord()
-            for (candidateValue in board.candidatePatternValue(unresolvedCoord)) {
+            val unresolvedCoord = board.unresolvedCoord()!!
+            for (candidateValue in board.candidateValues(unresolvedCoord)) {
                 yield(Pair(unresolvedCoord, candidateValue))
             }
         }
 
-        for (move in moves) {
-
-            // clone a board, and mark a potential move
+        return moves.map { move ->
             val newBoard = board.copy()
             newBoard.markValue(move.first, move.second)
 
-            // run eliminators
-            eliminators.forEach { it.eliminate(newBoard) }
-
-            if (!newBoard.isValid()) {
-                continue;
+            for (eliminator in eliminators) {
+                eliminator.eliminate(newBoard)
             }
 
-            val solved = solve(newBoard, depth + 1)
-            if (solved != null) {
-                return solved
-            }
-        }
-        return null
+            solve(newBoard, depth + 1)
+        }.firstOrNull { it != null }
     }
 }
