@@ -53,7 +53,7 @@ class Board private constructor(val candidatePatterns: IntArray) {
         return symbols[value(coord)]
     }
 
-    fun isConfirmed(coord:Coord) : Boolean {
+    fun isConfirmed(coord: Coord): Boolean {
         return masks.any { candidatePattern(coord) == it }
     }
 
@@ -61,15 +61,15 @@ class Board private constructor(val candidatePatterns: IntArray) {
         return Coord.all.none { candidatePatterns[it.index] == 0 } &&
                 CoordGroup.all.none { group ->
                     group.coords
-                        .filter {isConfirmed(it) }
-                        .groupingBy {candidatePattern(it) }
+                        .filter { isConfirmed(it) }
+                        .groupingBy { candidatePattern(it) }
                         .eachCount()
-                        .any {it.value > 1}
+                        .any { it.value > 1 }
                 }
     }
 
     fun isSolved(): Boolean {
-        return Coord.all.all { isConfirmed(it)}
+        return Coord.all.all { isConfirmed(it) }
     }
 
     //
