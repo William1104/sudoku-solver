@@ -12,7 +12,7 @@ class BoardReader {
             try {
                 return readBoard(path.toFile().inputStream())
             } catch (ex: Exception) {
-                throw RuntimeException("Failed to read ${path} as a board", ex)
+                throw RuntimeException("Failed to read $path as a board", ex)
             }
         }
 

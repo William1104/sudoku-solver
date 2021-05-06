@@ -2,7 +2,6 @@ rootProject.name = 'sudoku-solver'
 
 include 'java'
 include 'kotlin'
-include 'kotlin-2'
 
 buildCache {
     local {
