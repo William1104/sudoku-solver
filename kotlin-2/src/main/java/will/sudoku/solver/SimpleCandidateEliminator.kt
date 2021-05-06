@@ -6,8 +6,8 @@ class SimpleCandidateEliminator : CandidateEliminator {
         var stable: Boolean
         do {
             stable = true
-            for (coord in Coord.all) {
-                for (coordGroup in CoordGroup.all) {
+            for (coordGroup in CoordGroup.all) {
+                for (coord in coordGroup.coords) {
                     if (board.isConfirmed(coord)) {
                         for (peerCoord in coordGroup.coords) {
                             val updated = (coord != peerCoord) &&
