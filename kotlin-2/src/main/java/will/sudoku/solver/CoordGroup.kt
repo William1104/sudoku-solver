@@ -11,7 +11,7 @@ data class CoordGroup private constructor(val coords: List<Coord>) {
         private val horizontalCoordGroups = indices.map { groupIndex -> CoordGroup(groupIndex, indices) }
         private val regionCoordGroups = indices.map {
             val regionRow = it / regionSize
-            val regionCol = it / regionSize
+            val regionCol = it % regionSize
             val rowStart = regionRow * regionSize
             val colStart = regionCol * regionSize
             val rows = rowStart until (rowStart + regionSize)
