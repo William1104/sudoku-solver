@@ -3,12 +3,12 @@ package will.sudoku.solver
 import will.sudoku.solver.Settings.symbols
 import java.io.InputStream
 import java.nio.file.Path
-import kotlin.io.path.inputStream
 
 class BoardReader {
 
     companion object {
-        fun readBoard(path: Path) : Board {
+        @JvmStatic
+        fun readBoard(path: Path): Board {
             try {
                 return readBoard(path.toFile().inputStream())
             } catch (ex: Exception) {
@@ -16,15 +16,23 @@ class BoardReader {
             }
         }
 
-
+        @JvmStatic
         fun readBoard(inputStream: InputStream): Board {
-            val values = inputStream.bufferedReader()
-                .readLines()
-                .flatMap {
-                    it.map { c -> symbols.indexOf(c) }.filterNot { v -> v < 0 }
+            return readBoard(inputStream.bufferedReader().readText())
+        }
+
+        @JvmStatic
+        fun readBoard(string: String): Board {
+            val values = sequence {
+                string.forEach { c ->
+                    val value = symbols.indexOf(c)
+                    if (value >= 0) {
+                        yield(value)
+                    }
                 }
-                .toIntArray()
+            }.toList().toIntArray()
             return Board(values)
         }
+
     }
 }
