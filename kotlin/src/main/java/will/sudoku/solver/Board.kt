@@ -15,6 +15,7 @@ class Board private constructor(val candidatePatterns: IntArray) {
         val masks = (0 until size).map { 1 shl it }.toIntArray()
 
         // constructs a Board with known values
+        @JvmStatic
         operator fun invoke(values: IntArray): Board {
             val candidatePatternForWildcard = (1 shl size) - 1
             val candidatePatterns = values.map {
