@@ -4,7 +4,7 @@ import will.sudoku.solver.Board.Companion.masks
 
 // This simple eliminator simply scan all confirmed values
 // and the remove candidates of the same group
-class ExclusionCandidateEliminator(private val shortCircuitThreshold: Int) : CandidateEliminator {
+class ExclusionCandidateEliminator(var shortCircuitThreshold: Int) : CandidateEliminator {
 
     override fun eliminate(board: Board): Boolean {
         var anyUpdate = false
