@@ -2,10 +2,7 @@ package hin.sudoku.solver;
 
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.Blackhole;
-import will.sudoku.solver.Board;
-import will.sudoku.solver.BoardReader;
-import will.sudoku.solver.Solver;
-import will.sudoku.solver.SolverTest;
+import will.sudoku.solver.*;
 
 import java.util.concurrent.TimeUnit;
 
@@ -14,6 +11,7 @@ public class SolverBenchmark {
     @BenchmarkMode(Mode.AverageTime)
     @OutputTimeUnit(TimeUnit.MICROSECONDS)
     public void solvePuzzle(Blackhole bh, BenchmarkState state) {
+        Settings.INSTANCE.getExclusionCandidateEliminator().setShortCircuitThreshold(state.groupExecutionEliminatorThreshold);
         Solver solver = new Solver();
         bh.consume(solver.solve(state.board));
     }
@@ -22,6 +20,9 @@ public class SolverBenchmark {
     public static class BenchmarkState {
         @Param({"g1", "g2", "g3", "g4"})
         public String boardName;
+
+        @Param({"0", "3", "6", "9"})
+        public int groupExecutionEliminatorThreshold;
 
         public Board board;
 

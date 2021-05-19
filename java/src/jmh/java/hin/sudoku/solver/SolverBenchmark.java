@@ -73,7 +73,7 @@ public class SolverBenchmark {
         final var solver = new Solver();
         blackhole.consume(solver.solve(3, state.grid));
     }
-    
+
     @State(Scope.Benchmark)
     public static class BenchmarkState {
         @Param({"g1", "g2", "g3", "g4"})
