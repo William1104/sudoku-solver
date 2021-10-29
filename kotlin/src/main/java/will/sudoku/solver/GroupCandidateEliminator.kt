@@ -13,7 +13,7 @@ class GroupCandidateEliminator : CandidateEliminator {
                     .eachCount()
                     .filter {
                         val bitCount = it.key.countOneBits()
-                        bitCount == it.value && bitCount != 9
+                        bitCount == it.value && bitCount != Settings.size
                     }
                     .keys
 
