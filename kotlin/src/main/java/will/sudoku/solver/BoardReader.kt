@@ -1,7 +1,9 @@
 package will.sudoku.solver
 
 import will.sudoku.solver.Settings.symbols
+import java.io.IOException
 import java.io.InputStream
+import java.io.UncheckedIOException
 import java.nio.file.Path
 
 object BoardReader {
@@ -10,8 +12,8 @@ object BoardReader {
     fun readBoard(path: Path): Board {
         try {
             return readBoard(path.toFile().inputStream())
-        } catch (ex: Exception) {
-            throw RuntimeException("Failed to read $path as a board", ex)
+        } catch (ex: IOException) {
+            throw UncheckedIOException("Failed to read $path as a board", ex)
         }
     }
 
