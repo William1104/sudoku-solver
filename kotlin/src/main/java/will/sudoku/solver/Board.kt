@@ -50,18 +50,18 @@ class Board private constructor(val candidatePatterns: IntArray) {
     //
     // methods for status checking -------------------------------
     //
-    fun symbolAt(coord: Coord): Char {
-        return symbols[value(coord)]
+    fun symbolAt(coordinate: Coordinate): Char {
+        return symbols[value(coordinate)]
     }
 
-    fun isConfirmed(coord: Coord): Boolean {
-        return masks.any { candidatePattern(coord) == it }
+    fun isConfirmed(coordinate: Coordinate): Boolean {
+        return masks.any { candidatePattern(coordinate) == it }
     }
 
     fun isValid(): Boolean {
-        return Coord.all.none { candidatePatterns[it.index] == 0 } &&
-                CoordGroup.all.none { group ->
-                    group.coords
+        return Coordinate.all.none { candidatePatterns[it.index] == 0 } &&
+                CoordinateGroup.all.none { group ->
+                    group.coordinates
                         .filter { isConfirmed(it) }
                         .groupingBy { candidatePattern(it) }
                         .eachCount()
@@ -70,7 +70,7 @@ class Board private constructor(val candidatePatterns: IntArray) {
     }
 
     fun isSolved(): Boolean {
-        return Coord.all.all { isConfirmed(it) }
+        return Coordinate.all.all { isConfirmed(it) }
     }
 
     //
@@ -80,7 +80,7 @@ class Board private constructor(val candidatePatterns: IntArray) {
         fun line(row: Int): String {
             return (0 until regionSize).map { region ->
                 (0 until regionSize).map { regionCol ->
-                    symbolAt(Coord(row, region * regionSize + regionCol))
+                    symbolAt(Coordinate(row, region * regionSize + regionCol))
                 }.joinToString(separator = "")
             }.joinToString(separator = "!") + lineSeparator()
         }
@@ -102,13 +102,13 @@ class Board private constructor(val candidatePatterns: IntArray) {
     //
 
     // return the raw candidate pattern
-    fun candidatePattern(coord: Coord): Int {
-        return candidatePatterns[coord.index]
+    fun candidatePattern(coordinate: Coordinate): Int {
+        return candidatePatterns[coordinate.index]
     }
 
     // return the candidate pattern as a list of value
-    fun candidateValues(coord: Coord): IntArray {
-        val candidate = candidatePattern(coord)
+    fun candidateValues(coordinate: Coordinate): IntArray {
+        val candidate = candidatePattern(coordinate)
         return (0 until size).filter {
             candidate and masks[it] > 0
         }.map { it + 1 }.toIntArray()
@@ -116,16 +116,16 @@ class Board private constructor(val candidatePatterns: IntArray) {
 
     // erase candidate pattern
     // if the pattern is updated, return true
-    fun eraseCandidatePattern(coord: Coord, candidatePattern: Int): Boolean {
-        val old = candidatePatterns[coord.index]
-        candidatePatterns[coord.index] = candidatePatterns[coord.index] and (candidatePattern.inv())
-        return (old != candidatePatterns[coord.index])
+    fun eraseCandidatePattern(coordinate: Coordinate, candidatePattern: Int): Boolean {
+        val old = candidatePatterns[coordinate.index]
+        candidatePatterns[coordinate.index] = candidatePatterns[coordinate.index] and (candidatePattern.inv())
+        return (old != candidatePatterns[coordinate.index])
     }
 
     // erase candidate value
     // if the pattern is updated, return true
-    fun eraseCandidateValue(coord: Coord, value: Int): Boolean {
-        return eraseCandidatePattern(coord, masks[value - 1])
+    fun eraseCandidateValue(coordinate: Coordinate, value: Int): Boolean {
+        return eraseCandidatePattern(coordinate, masks[value - 1])
     }
 
     //
@@ -133,20 +133,20 @@ class Board private constructor(val candidatePatterns: IntArray) {
     //
 
     // get confirmed value
-    fun value(coord: Coord): Int {
-        return (1..size).firstOrNull { candidatePatterns[coord.index] == masks[it - 1] } ?: 0
+    fun value(coordinate: Coordinate): Int {
+        return (1..size).firstOrNull { candidatePatterns[coordinate.index] == masks[it - 1] } ?: 0
     }
 
     // mark confirmed value
-    fun markValue(coord: Coord, value: Int) {
-        candidatePatterns[coord.index] = masks[value - 1]
+    fun markValue(coordinate: Coordinate, value: Int) {
+        candidatePatterns[coordinate.index] = masks[value - 1]
     }
 
     //
     // methods for getting unsolved coord ---------------------
     // this method should be handled by another delegated class for move selection later
-    fun unresolvedCoord(): Coord? {
-        return Coord.all.filterNot { isConfirmed(it) }
+    fun unresolvedCoord(): Coordinate? {
+        return Coordinate.all.filterNot { isConfirmed(it) }
             .minByOrNull { candidatePattern(it).countOneBits() }
     }
 

@@ -11,15 +11,15 @@ class ExclusionCandidateEliminator(var shortCircuitThreshold: Int) : CandidateEl
         var stable: Boolean
         do {
             stable = true
-            for (coordGroup in CoordGroup.all) {
+            for (coordGroup in CoordinateGroup.all) {
 
-                val knownValues = coordGroup.coords.map { board.value(it) }.toSet()
+                val knownValues = coordGroup.coordinates.map { board.value(it) }.toSet()
                 if (knownValues.size >= shortCircuitThreshold) continue
 
                 // find if any 'candidate' appear only once in the group
                 // if so, mark the cell having this candidate with that candidate.
                 val candidatesValueAppearOnceOnly =
-                    coordGroup.coords.flatMap { coord -> board.candidateValues(coord).asSequence() }
+                    coordGroup.coordinates.flatMap { coord -> board.candidateValues(coord).asSequence() }
                         .groupingBy { it }
                         .eachCount()
                         .filterValues { it == 1 }
@@ -27,7 +27,7 @@ class ExclusionCandidateEliminator(var shortCircuitThreshold: Int) : CandidateEl
                         .keys
 
                 for (candidateValue in candidatesValueAppearOnceOnly) {
-                    for (coord in coordGroup.coords) {
+                    for (coord in coordGroup.coordinates) {
                         if (board.candidatePattern(coord) and masks[candidateValue - 1] > 1) {
                             board.markValue(coord, candidateValue)
                             anyUpdate = true
