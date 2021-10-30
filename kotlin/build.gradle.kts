@@ -6,8 +6,8 @@ plugins {
     id("me.champeau.jmh") version "0.6.4"
 }
 
-group "will"
-version "0.1"
+group = "will"
+version = "0.1"
 
 repositories {
     mavenCentral()

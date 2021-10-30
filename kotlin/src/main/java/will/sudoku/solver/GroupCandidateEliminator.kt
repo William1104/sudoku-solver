@@ -6,9 +6,9 @@ class GroupCandidateEliminator : CandidateEliminator {
         var stable: Boolean
         do {
             stable = true
-            for (coordGroup in CoordGroup.all) {
+            for (coordGroup in CoordinateGroup.all) {
                 // find candidate pattern which occurrence equals to its bit count
-                val candidatePatterns = coordGroup.coords
+                val candidatePatterns = coordGroup.coordinates
                     .groupingBy { board.candidatePattern(it) }
                     .eachCount()
                     .filter {
@@ -19,7 +19,7 @@ class GroupCandidateEliminator : CandidateEliminator {
 
                 for (candidatePattern in candidatePatterns) {
                     // and then exclude that pattern from other cells in the same group
-                    val updated = coordGroup.coords
+                    val updated = coordGroup.coordinates
                         .filterNot { board.candidatePattern(it) == candidatePattern }
                         .map { board.eraseCandidatePattern(it, candidatePattern) }
                         .any { it }
