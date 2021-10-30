@@ -4,7 +4,7 @@ import org.assertj.core.api.Assertions
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
-import will.sudoku.solver.BoardReader.Companion.readBoard
+import will.sudoku.solver.BoardReader.readBoard
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.stream.Stream
@@ -18,7 +18,7 @@ class SolverTest {
 
     @ParameterizedTest(name="{index}: {0}")
     @MethodSource("boards")
-    fun test(boardName: String, board: Board, expected: Board) {
+    fun test(board: Board, expected: Board) {
         val solved = Solver().solve(board)
         Assertions.assertThat(solved).isEqualTo(expected)
     }
