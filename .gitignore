@@ -4,5 +4,6 @@
 **/.vscode/
 **/.gradle/
 **/.idea/
-
 **/build/
+java/bin/
+kotlin/bin/
