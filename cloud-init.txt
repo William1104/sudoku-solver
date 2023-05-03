@@ -5,7 +5,7 @@
 # >  az vm create \
 #    --resource-group dev-server \
 #    --name dev-server \
-#    --image UbuntuTLS \
+#    --image UbuntuLTS \
 #    --custom-data cloud-init.txt \
 #    --generate-ssh-keys
 apt:
