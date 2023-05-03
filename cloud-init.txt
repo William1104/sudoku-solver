@@ -1,0 +1,26 @@
+#cloud-config
+# we may create a azure VM with following commands. azure resource group location should be changed to where close to developer.
+# >  az login 
+# >  az group create --name dev-server --location eastasia 
+# >  az vm create \
+#    --resource-group dev-server \
+#    --name dev-server \
+#    --image UbuntuTLS \
+#    --custom-data cloud-init.txt \
+#    --generate-ssh-keys
+apt:
+  sources:
+    docker.list:
+      source: deb [arch=amd64] https://download.docker.com/linux/ubuntu $RELEASE stable
+      keyid: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
+
+packages:
+  - docker-ce
+  - docker-ce-cli
+
+groups:
+  - docker
+
+system_info:
+  default_user:
+    groups: [docker]
