@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(./gradlew clean:*)",
+      "Bash(where java:*)",
+      "Bash(sed:*)",
+      "Bash(rm:*)",
+      "Bash(\"C:\\\\Program Files\\\\Zulu\\\\zulu-17\\\\bin\\\\java.exe\":*)",
+      "Bash(curl:*)"
+    ]
+  }
+}
