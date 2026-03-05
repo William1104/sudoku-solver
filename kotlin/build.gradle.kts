@@ -2,8 +2,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     java
-    kotlin("jvm") version "1.8.20"
-    id("me.champeau.jmh") version "0.6.4"
+    kotlin("jvm") version "2.1.0"
+    id("me.champeau.jmh") version "0.7.3"
 }
 
 group "will"
@@ -19,8 +19,8 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-params:5.7.1")
     testImplementation("org.assertj:assertj-core:3.17.1")
 
-    jmh("org.openjdk.jmh:jmh-core:1.29")
-    jmh("org.openjdk.jmh:jmh-generator-annprocess:1.29")
+    jmh("org.openjdk.jmh:jmh-core:1.37")
+    jmh("org.openjdk.jmh:jmh-generator-annprocess:1.37")
 }
 
 tasks.jar {
@@ -33,10 +33,10 @@ tasks.test {
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
+        languageVersion.set(JavaLanguageVersion.of(21))
     }
 }
 
 tasks.withType<KotlinCompile>().configureEach {
-    kotlinOptions.jvmTarget = "17"
+    kotlinOptions.jvmTarget = "21"
 }
