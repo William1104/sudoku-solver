@@ -5,7 +5,10 @@
       "WebSearch",
       "Bash(./gradlew dependencies:*)",
       "Bash(./gradlew :java:dependencies:*)",
-      "Bash(./gradlew :kotlin:dependencies:*)"
+      "Bash(./gradlew :kotlin:dependencies:*)",
+      "Bash(./gradlew :kotlin:build:*)",
+      "Bash(./gradlew :kotlin:test:*)",
+      "Bash(./gradlew :kotlin:compileTestKotlin:*)"
     ]
   }
 }
