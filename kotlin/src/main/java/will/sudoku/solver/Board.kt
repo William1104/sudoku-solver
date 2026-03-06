@@ -5,9 +5,71 @@ import will.sudoku.solver.Settings.size
 import will.sudoku.solver.Settings.symbols
 import java.lang.System.lineSeparator
 
+/**
+ * Represents a Sudoku puzzle board with 81 cells arranged in a 9×9 grid.
+ *
+ * The board uses a bitmask-based candidate representation to efficiently track possible values
+ * for each cell. Each cell's candidate pattern is a 9-bit integer where bit `i` (0-indexed)
+ * corresponds to value `i+1`. A confirmed cell has exactly one bit set. An empty/unknown
+ * cell has all bits set.
+ *
+ * ## Bitmask Representation
+ * The board uses bit manipulation to represent candidate patterns efficiently:
+ * - `0b000000001` - only value 1 is possible (bit 0)
+ * - `0b000000010` - only value 2 is possible (bit 1)
+ * - `0b000000100` - only value 3 is possible (bit 2)
+ * - And so on up to `0b100000000` - only value 9 is possible (bit 8)
+ * - `0b111111111` - all values 1-9 are possible (empty cell, wildcard)
+ *
+ * ## Cell States
+ * - **Confirmed cell**: Exactly one candidate value (single bit set)
+ * - **Unresolved cell**: Multiple candidate values (multiple bits set)
+ * - **Empty cell**: No values (all bits set, wildcard)
+ *
+ * ## Coordinate System
+ * Cells are indexed 0-80 using a [row, col] coordinate system:
+ * - `Coord(row, col)` - Represents a cell position
+ * - Linear index: `index = row * 9 + col`
+ * - Rows: 0-8, Columns: 0-8
+ *
+ * ## Thread Safety
+ * This class is designed for use in a single-threaded backtracking solver.
+ * The `copy()` method creates a new board instance for safe backtracking.
+ *
+ * ## Example
+ * ```kotlin
+ * // Create an empty board
+ * val board = Board()
+ *
+ * // Get candidate values for a cell
+ * val candidates = board.candidateValues(coord) // Returns IntArray of possible values
+ *
+ * // Check if a cell is confirmed
+ * if (board.isConfirmed(coord)) { ... }
+ *
+ * // Mark a cell value
+ * board.markValue(coord, 5)
+ *
+ * // Erase a candidate value
+ * board.eraseCandidateValue(coord, 5)
+ * ```
+ *
+ * @param candidatePatterns IntArray of 81 candidate patterns (one per cell).
+ *                         Each pattern is a 9-bit integer representing possible values.
+ * @throws IllegalArgumentException if candidatePatterns size is not 81.
+ */
 class Board private constructor(val candidatePatterns: IntArray) {
+    /**
+     * Initializes a new Sudoku board with the given candidate patterns.
+     *
+     * @param candidatePatterns IntArray of 81 candidate patterns, one per cell.
+     *                             Each pattern is a 9-bit integer representing possible values.
+     * @throws IllegalArgumentException if array size is not exactly 81.
+     */
     init {
-        require(candidatePatterns.size == size * size)
+        require(candidatePatterns.size == size * size) {
+            "Expected $size*$size board (81 cells), but got ${candidatePatterns.size} patterns"
+        }
     }
 
     companion object {
