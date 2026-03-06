@@ -14,10 +14,9 @@ repositories {
 }
 
 dependencies {
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.1")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.1")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.7.1")
-    testImplementation("org.assertj:assertj-core:3.17.1")
+    // Use junit-jupiter aggregator to fix Gradle test framework auto-loading deprecation
+    testImplementation("org.junit.jupiter:junit-jupiter:5.11.4")
+    testImplementation("org.assertj:assertj-core:3.26.3")
 
     jmh("org.openjdk.jmh:jmh-core:1.37")
     jmh("org.openjdk.jmh:jmh-generator-annprocess:1.37")
