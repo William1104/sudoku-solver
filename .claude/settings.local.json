@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(sed:*)",
+      "WebSearch",
+      "Bash(./gradlew dependencies:*)",
+      "Bash(./gradlew :java:dependencies:*)",
+      "Bash(./gradlew :kotlin:dependencies:*)"
+    ]
+  }
+}
