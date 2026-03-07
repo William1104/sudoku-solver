@@ -79,8 +79,7 @@ jobs:
     # Performs static analysis using Detekt
     - name: Run Detekt
       run: |
-        detekt --input ${{ github.workspace }} --report sarif:${{ github.workspace }}/detekt.sarif.json --build-upon-fail false
-      continue-on-error: true
+        detekt --config ${{ github.workspace }}/.detekt/config.yml --input ${{ github.workspace }} --report sarif:${{ github.workspace }}/detekt.sarif.json --build-upon-default false
 
     # Modifies the SARIF output produced by Detekt so that absolute URIs are relative
     # This is so we can easily map results onto their source files

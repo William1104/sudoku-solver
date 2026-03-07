@@ -1,0 +1,88 @@
+# Detekt Configuration
+# Follows Google Kotlin Style Guide
+# Reference: https://kotlinlang.org/docs/coding-conventions.html
+
+build:
+  maxIssues: 0 01.0.0
+  excludeCorrectable: false
+
+config:
+  # Style rules from Google Kotlin Style Guide
+  style:
+    google:
+      maxLineLength: 120
+      indentationSize: 4
+    # Suppress rules that don't align with project needs
+  rules:
+    # Suppress MagicNumber for CLI arguments (common in CLI)
+    # This allows us to use anonymous values in CLI parsers
+    active: true
+    ignoreUnderscoresPrefix: false
+    # Don't fail on code style issues (progressive mode)
+    buildUponDefaultConfig: false
+
+# Weights for issues
+# 0-2: Info
+# 3-4: Warning
+# 5+: Error
+
+complexity:
+  active: true
+  threshold: 15
+  # Google Style: Methods over complexity threshold should be refactored
+  discountComplexityThreshold: 5
+  # Ignore complex methods in CLI parsers (common pattern)
+  ignores:
+    - 'CliParser.parse'
+    - 'CliParser.parseFormat'
+
+# Console output
+output-reports:
+  # Console output format for CI logs
+  console:
+    # Show all issues but don't fail the build
+    # Report format: Plain text with issue counts
+    report: 'txt'
+
+# Disable rules that don't apply to this project
+comments:
+  active: false
+
+empty-blocks:
+  active: false
+
+# Naming conventions - Google Style Guide
+naming:
+  active: true
+  package:
+    # Package names should be lowercase
+    active: true
+  class:
+    # Class names should be PascalCase
+    active: true
+  function:
+    # Function names should be camelCase, starting with lowercase
+    active: true
+  # Google Style allows exceptions for:
+  # - Simple getters/setters can match property names
+  # - Functions in CLI parsers with simple logic may be concise
+
+# Formatting
+formatting:
+  active: true
+  # Google Style Guide indentation
+  google:
+    # Use tabs for indentation (Google Style uses tabs, but project uses 4 spaces)
+    # Let project keep existing 4-space indentation
+    useTabs: false
+    indentSize: 4
+
+# Other settings
+# Suppress LongLine for now (will address gradually)
+LongLine:
+  active: false
+  maxLength: 120
+
+# Suppress NewLineAtEndOfFile for now (will address gradually)
+NewLineAtEndOfFile:
+  active: false

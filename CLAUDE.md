@@ -25,6 +25,7 @@ Single-module Gradle project:
 - **AssertJ**: 3.26.3
 - **JMH**: 1.37
 - **JMH Gradle Plugin**: 0.7.3
+- **Coding Standards**: `coding-standards.md` - Google Kotlin Style Guide
 
 ### Common Commands
 
