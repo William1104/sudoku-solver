@@ -13,8 +13,8 @@ class BoardReaderValidationTest {
     @Test
     @DisplayName("Valid board should parse successfully")
     fun testValidBoard() {
-        // Simple valid 9x9 board (81 consecutive digits)
-        val boardString = "123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789"
+        // Valid solved 9x9 board (from g1.solution)
+        val boardString = "549378162217465398638291475923546781174829536865713924452987613391652847786134259"
 
         val board = BoardReader.readBoard(boardString)
         Assertions.assertEquals(81, board.candidatePatterns.size)

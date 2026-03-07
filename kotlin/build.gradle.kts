@@ -1,6 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
+    application
     java
     kotlin("jvm") version "2.1.0"
     id("me.champeau.jmh") version "0.7.3"
@@ -20,6 +21,10 @@ dependencies {
 
     jmh("org.openjdk.jmh:jmh-core:1.37")
     jmh("org.openjdk.jmh:jmh-generator-annprocess:1.37")
+}
+
+application {
+    mainClass.set("will.sudoku.solver.MainKt")
 }
 
 tasks.jar {
