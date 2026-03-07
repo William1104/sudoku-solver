@@ -4,33 +4,24 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a high-performance Sudoku solver implemented in both Kotlin (primary) and Java (legacy). The solver uses bitmask-based candidate representation and multiple constraint propagation strategies combined with backtracking.
+This is a high-performance Sudoku solver implemented in Kotlin. The solver uses bitmask-based candidate representation and multiple constraint propagation strategies combined with backtracking.
 
 ## Build System
 
-Multi-module Gradle project with two sub-modules:
-- `kotlin` - Primary implementation (Kotlin)
-- `java` - Legacy implementation (Java equivalent)
+Single-module Gradle project:
+- `kotlin` - Kotlin implementation
 
 ### Common Commands
 
 ```bash
-# Build both modules
+# Build the project
 ./gradlew build
-
-# Build specific module
-./gradlew :kotlin:build
-./gradlew :java:build
 
 # Clean build artifacts
 ./gradlew clean
 
 # Run all tests
 ./gradlew test
-
-# Run tests for specific module
-./gradlew :kotlin:test
-./gradlew :java:test
 
 # Run single test class
 ./gradlew :kotlin:test --tests will.sudoku.solver.SolverTest
@@ -146,5 +137,3 @@ kotlin/src/main/java/will/sudoku/solver/
 ├── ExclusionCandidateEliminator.kt
 └── BoardReader.kt            # Parse boards from files/strings
 ```
-
-Java module mirrors this structure under `hin.sudoku.solver` package.
