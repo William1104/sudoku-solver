@@ -24,31 +24,16 @@ package will.sudoku.solver
  *     val board = BoardReader.readBoard(puzzleString)
  * } catch (e: PuzzleException) {
  *     System.err.println("Puzzle error: ${e.message}")
- *     System.err.println("Suggested fix: ${e.suggestion}")
+ *     if (e.suggestion != null) {
+ *         System.err.println("Suggested fix: ${e.suggestion}")
+ *     }
  * }
  * ```
  *
  * @property suggestion Human-readable suggestion for fixing the error
- * @property exitCode Suggested exit code for the application
  */
-open class PuzzleException(
-    message: String,
-    val suggestion: String? = null,
-    val exitCode: Int = 2,
-    cause: Throwable? = null
-) : RuntimeException(message, cause) {
-    constructor(message: String, suggestion: String? = null, exitCode: Int) : this(message) {
-        this.suggestion = suggestion
-        this.exitCode = exitCode
-    }
+class PuzzleException(message: String, cause: Throwable? = null) : Exception(message, cause) {
 
-    constructor(
-        message: String,
-        suggestion: String?,
-        exitCode: Int,
-        cause: Throwable? = null
-    ) : this(message, cause) {
-        this.suggestion = suggestion
-        this.exitCode = exitCode
-    }
+    var suggestion: String? = null
+    var exitCode: Int = 2
 }
