@@ -78,7 +78,6 @@ jobs:
 
     # Performs static analysis using Detekt
     - name: Run Detekt
-      continue-on-error: true
       run: |
         detekt --input ${{ github.workspace }} --report sarif:${{ github.workspace }}/detekt.sarif.json
 

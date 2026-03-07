@@ -1,0 +1,29 @@
+# Code Owners for sudoku-solver
+
+# This file defines who must approve pull requests for different parts of the codebase.
+
+# Default: All changes require approval from repository maintainers
+* @William1104
+
+# Core solver implementation
+kotlin/src/main/java/will/sudoku/solver/ @William1104
+
+# CLI implementation
+kotlin/src/main/java/will/sudoku/solver/cli/ @William1104
+
+# Tests
+kotlin/src/test/ @William1104
+
+# Build configuration
+build.gradle.kts
+settings.gradle
+gradle/wrapper/ @William1104
+
+# GitHub Actions workflows
+.github/workflows/ @William1104
+
+# Documentation
+*.md @William1104
+
+# Memory files for Claude Code
+memory/ @William1104

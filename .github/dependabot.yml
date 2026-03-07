@@ -1,0 +1,56 @@
+version: 2
+updates:
+  # Enable version updates for Gradle dependencies
+  - package-ecosystem: "gradle"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "William1104"
+    assignees:
+      - "William1104"
+    labels:
+      - "dependencies"
+      - "gradle"
+    commit-message:
+      prefix: "chore(deps):"
+      prefix-development: "chore(deps-dev):"
+      include: "scope"
+    allow:
+      - dependency-type: "direct"
+      - dependency-type: "indirect"
+    ignore:
+      # Ignore major version updates for stable dependencies
+      - dependency-name: "org.junit.jupiter"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "org.assertj"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "org.openjdk.jmh"
+        update-types: ["version-update:semver-major"]
+
+  # Enable version updates for GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "William1104"
+    assignees:
+      - "William1104"
+    labels:
+      - "dependencies"
+      - "github-actions"
+    commit-message:
+      prefix: "chore(actions):"
+      include: "scope"
+    ignore:
+      # Actions that are stable and don't need frequent updates
+      - dependency-name: "actions/checkout"
+      - dependency-name: "actions/setup-java"
+      - dependency-name: "actions/cache"
