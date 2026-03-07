@@ -3,6 +3,8 @@ package will.sudoku.solver
 import will.sudoku.solver.Settings.size
 import will.sudoku.solver.Settings.regionSize
 import will.sudoku.solver.Settings.symbols
+import will.sudoku.solver.ValidationException
+import will.sudoku.solver.PuzzleException
 import java.io.InputStream
 import java.nio.file.Path
 
@@ -13,8 +15,15 @@ class BoardReader {
         fun readBoard(path: Path): Board {
             try {
                 return readBoard(path.toFile().inputStream())
+            } catch (ex: ValidationException) {
+                // Re-throw validation exception with context
+                throw ex
+            } catch (ex: PuzzleException) {
+                // Re-throw puzzle exception with context
+                throw ex
             } catch (ex: Exception) {
-                throw RuntimeException("Failed to read $path as a board", ex)
+                // Wrap unexpected exceptions
+                throw RuntimeException("Failed to read $path as a board: ${ex.message}", ex)
             }
         }
 
@@ -69,8 +78,9 @@ class BoardReader {
             val expectedSize = size * size
             if (validValues.size != expectedSize) {
                 throw ValidationException(
-                    "Expected $expectedSize cells (${size}x${size} grid), but found ${validValues.size} valid cells",
-                    input = string
+                    "Expected $expectedSize cells (${size}x${size} grid), but found ${validValues.size} valid cells. " +
+                    "Ensure the puzzle has exactly 9 rows and 9 columns (excluding separators).",
+                    string
                 )
             }
 
