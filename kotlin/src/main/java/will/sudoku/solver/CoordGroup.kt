@@ -66,14 +66,14 @@ data class CoordGroup private constructor(val coords: List<Coord>) {
          *
          * Cached for O(1) access when getting vertical groups.
          */
-        private val verticalCoordGroups = indices.map { groupIndex -> CoordGroup(indices, groupIndex) }
+        private val verticalCoordGroups = indices.map { groupIndex -> CoordGroup(indices, groupIndex..groupIndex) }
 
         /**
          * Pre-computed horizontal coordinate groups (rows).
          *
          * Cached for O(1) access when getting horizontal groups.
          */
-        private val horizontalCoordGroups = indices.map { groupIndex -> CoordGroup(groupIndex, indices) }
+        private val horizontalCoordGroups = indices.map { groupIndex -> CoordGroup(groupIndex..groupIndex, indices) }
 
         /**
          * Pre-computed region coordinate groups (3x3 subgrids).
