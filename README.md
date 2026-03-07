@@ -17,7 +17,7 @@ This project implements a fast Sudoku solver that combines:
   - *Simple Eliminator*: Removes confirmed values from peer cells
   - *Group Eliminator*: Detects naked pairs/triples (naked subsets)
   - *Exclusion Eliminator*: Detects hidden singles
-- **Configurable Thresholds**: The exclusion eliminator can skip groups with too many known values
+- **Configurable Threshold**: The exclusion eliminator can skip groups with too many known values
 - **Benchmarking**: JMH microbenchmarks for performance analysis
 
 ## Project Structure
@@ -52,8 +52,17 @@ sudoku-solver/
 
 ### Prerequisites
 
-- JDK 11 or higher
-- Gradle 7.x+ (or use the included Gradle wrapper)
+- JDK 21
+- Gradle 8.11+ (or use the included Gradle wrapper)
+- Kotlin 2.1.0+
+
+### Key Dependencies
+
+- **Kotlin**: 2.1.0
+- **JUnit Jupiter**: 5.11.4 (testing framework)
+- **AssertJ**: 3.26.3 (assertions library)
+- **JMH**: 1.37 (Java Microbenchmark Harness)
+- **JMH Gradle Plugin**: 0.7.3
 
 ### Build Commands
 
@@ -274,7 +283,7 @@ Solution: Clean and rebuild: ./gradlew clean build
 
 **Problem**: JMH benchmarks fail to run
 ```
-Solution: Ensure JDK 11 is installed and JAVA_HOME is set correctly
+Solution: Ensure JDK 21 is installed and JAVA_HOME is set correctly
 ```
 
 ### Solver Issues

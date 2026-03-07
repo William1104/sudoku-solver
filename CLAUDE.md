@@ -6,10 +6,25 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a high-performance Sudoku solver implemented in Kotlin. The solver uses bitmask-based candidate representation and multiple constraint propagation strategies combined with backtracking.
 
+## System Requirements
+
+- **JDK**: 21
+- **Gradle**: 8.11+ (wrapper included)
+- **Kotlin**: 2.1.0
+- **Operating System**: Linux, macOS, Windows (with WSL2 support)
+
 ## Build System
 
 Single-module Gradle project:
 - `kotlin` - Kotlin implementation
+
+## Key Dependencies
+
+- **Kotlin**: 2.1.0
+- **JUnit Jupiter**: 5.11.4
+- **AssertJ**: 3.26.3
+- **JMH**: 1.37
+- **JMH Gradle Plugin**: 0.7.3
 
 ### Common Commands
 
@@ -116,6 +131,12 @@ Global settings in `Settings` object:
 - `regionSize = 3` - 3x3 subgrids
 - `symbols` - Display characters (`.`, `1`-`9`)
 - `eliminators` - Ordered list of eliminators applied during solving
+
+## Compiler Configuration
+
+- **JVM Target**: JVM_21 (from build.gradle.kts)
+- **Toolchain Language**: Java 21
+- Kotlin code compiles to Java 21 bytecode
 
 To add a new eliminator:
 1. Implement `CandidateEliminator` interface
