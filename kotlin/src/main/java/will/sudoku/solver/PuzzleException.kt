@@ -31,8 +31,9 @@ package will.sudoku.solver
  * ```
  *
  * @property suggestion Human-readable suggestion for fixing the error
+ * @property exitCode Suggested exit code for the application
  */
-class PuzzleException(message: String, cause: Throwable? = null) : Exception(message, cause) {
+class PuzzleException(message: String, cause: Throwable? = null) : RuntimeException(message, cause) {
 
     var suggestion: String? = null
     var exitCode: Int = 2

@@ -34,8 +34,4 @@ open class SolverException(
     message: String,
     val exitCode: Int = 1,
     cause: Throwable? = null
-) : RuntimeException(message, cause) {
-    constructor(message: String, exitCode: Int) : this(message) {
-        this.exitCode = exitCode
-    }
-}
+) : RuntimeException(message, cause)

@@ -2,7 +2,6 @@ package will.sudoku.solver
 
 import org.junit.jupiter.api.Test
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
 
 class PuzzleExceptionTest {
 
@@ -57,6 +56,9 @@ class PuzzleExceptionTest {
     fun `PuzzleException is unchecked exception`() {
         val exceptionClass = PuzzleException::class.java
 
-        assertThat(exceptionClass.modifiers).isEmpty()
+        // Unchecked exceptions don't extend from Exception or have no throws clause
+        // PuzzleException extends RuntimeException which is unchecked
+        assertThat(RuntimeException::class.java.isAssignableFrom(PuzzleException::class.java))
+            .isTrue()
     }
 }

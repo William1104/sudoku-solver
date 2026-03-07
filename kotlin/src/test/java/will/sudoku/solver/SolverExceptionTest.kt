@@ -2,7 +2,6 @@ package will.sudoku.solver
 
 import org.junit.jupiter.api.Test
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
 
 class SolverExceptionTest {
 
@@ -28,6 +27,8 @@ class SolverExceptionTest {
     fun `SolverException is unchecked exception`() {
         val exceptionClass = SolverException::class.java
 
-        assertThat(exceptionClass.modifiers).isEmpty()
+        // Unchecked exceptions extend from RuntimeException
+        assertThat(RuntimeException::class.java.isAssignableFrom(SolverException::class.java))
+            .isTrue()
     }
 }
