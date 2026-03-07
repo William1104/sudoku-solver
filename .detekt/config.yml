@@ -167,10 +167,7 @@ style:
     maxJumpCount: 1
   MagicNumber:
     active: false
-    ignoreNumbers:
-      - '0'
-      - '1'
-      - '-1'
+    ignoreNumbers: ['-1', '0', '1', '2']
     ignoreHashCodeFunction: true
     ignorePropertyDeclaration: false
     ignoreLocalVariableDeclaration: false
@@ -180,7 +177,6 @@ style:
     ignoreNamedArgument: true
     ignoreEnums: false
     ignoreRanges: false
-    ignoreExtensionFunctions: true
   MandatoryBracesIfStatements:
     active: false
   MandatoryBracesLoops:
@@ -191,14 +187,6 @@ style:
     excludePackageStatements: true
     excludeImportStatements: true
     excludeCommentStatements: false
-  ModifiersOrder:
-    active: false
-  MultilineLambdaItParameter:
-    active: false
-  NestedClassesVisibility:
-    active: false
-  NewLineAtEndOfFile:
-    active: false
   NoTabs:
     active: true
   ObjectLiteralToLambda:
@@ -208,8 +196,6 @@ style:
   OptionalUnit:
     active: false
   OptionalWhenBraces:
-    active: false
-  PreferToOverPairSyntax:
     active: false
   ProtectedMemberInFinalClass:
     active: false
@@ -243,8 +229,6 @@ style:
     active: false
   UnnecessaryAnnotationUseSiteTarget:
     active: false
-  UnnecessaryFilter:
-    active: false
   UnnecessaryInheritance:
     active: false
   UnusedImports:
@@ -267,8 +251,6 @@ style:
     active: false
   UseIfInsteadOfWhen:
     active: false
-  UseIsNullOrEmpty:
-    active: false
   UseOrEmpty:
     active: false
   UseRequire:
@@ -283,8 +265,6 @@ style:
     active: false
   WildcardImport:
     active: true
-  PreferToOverPairSyntax:
-    active: false
 
 # Naming conventions - Google Style Guide
 naming:
@@ -359,7 +339,7 @@ naming:
     variablePattern: '[a-z][A-Za-z0-9]*'
     excludeClassPattern: '$^'
     ignoreOverridden: true
-    privatePropertyPattern: '(_)?[a-z][A-Za-z0-9]*'
+    privateVariablePattern: '(_)?[a-z][A-Za-z0-9]*'
 
 # Performance
 performance:
