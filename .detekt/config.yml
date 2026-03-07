@@ -189,8 +189,6 @@ style:
     excludeCommentStatements: false
   NoTabs:
     active: true
-  ObjectLiteralToLambda:
-    active: false
   OptionalAbstractKeyword:
     active: false
   OptionalUnit:
@@ -250,8 +248,6 @@ style:
   UseIfEmptyOrIfBlank:
     active: false
   UseIfInsteadOfWhen:
-    active: false
-  UseOrEmpty:
     active: false
   UseRequire:
     active: false
