@@ -1,11 +1,3 @@
 rootProject.name = 'sudoku-solver'
 
-include 'java'
 include 'kotlin'
-
-buildCache {
-    local {
-        // Set local build cache directory.
-        directory = "${settingsDir}/build-cache"
-    }
-}

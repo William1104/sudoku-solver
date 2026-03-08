@@ -4,23 +4,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a high-performance Sudoku solver implemented in both Kotlin (primary) and Java (legacy). The solver uses bitmask-based candidate representation and multiple constraint propagation strategies combined with backtracking.
+This is a high-performance Sudoku solver implemented in Kotlin. The solver uses bitmask-based candidate representation and multiple constraint propagation strategies combined with backtracking.
 
 ## Build System
 
-Multi-module Gradle project with two sub-modules:
-- `kotlin` - Primary implementation (Kotlin)
-- `java` - Legacy implementation (Java equivalent)
+Single-module Gradle project:
+- `kotlin` - Main implementation (Kotlin)
 
 ### Common Commands
 
 ```bash
-# Build both modules
+# Build the project
 ./gradlew build
-
-# Build specific module
-./gradlew :kotlin:build
-./gradlew :java:build
 
 # Clean build artifacts
 ./gradlew clean
@@ -28,16 +23,24 @@ Multi-module Gradle project with two sub-modules:
 # Run all tests
 ./gradlew test
 
-# Run tests for specific module
-./gradlew :kotlin:test
-./gradlew :java:test
-
 # Run single test class
-./gradlew :kotlin:test --tests will.sudoku.solver.SolverTest
+./gradlew test --tests will.sudoku.solver.SolverTest
 
 # Run JMH benchmarks (manual trigger only)
 ./gradlew :kotlin:jmh
+
+# Run the solver with a sample puzzle
+./gradlew :kotlin:run
 ```
+
+## CI/CD
+
+The project uses GitHub Actions:
+- **Java CI workflow**: Runs on push/PR to `master` and `develop` branches
+- **JMH workflow**: Runs via manual dispatch only (triggers `./gradlew jmh`)
+- **Detekt workflow**: Runs on push to `master`, PRs to `master`, and weekly schedule
+
+JDK 21 is required (configured in `.github/workflows/gradle.yml`).
 
 ## Architecture
 
@@ -144,7 +147,21 @@ kotlin/src/main/java/will/sudoku/solver/
 ├── SimpleCandidateEliminator.kt
 ├── GroupCandidateEliminator.kt
 ├── ExclusionCandidateEliminator.kt
-└── BoardReader.kt            # Parse boards from files/strings
+├── BoardReader.kt            # Parse boards from files/strings
+└── ValidationException.kt   # Custom exception for invalid board formats
 ```
 
-Java module mirrors this structure under `hin.sudoku.solver` package.
+## Running the Solver
+
+The `Solver` class has a `main()` method that can be run with a sample puzzle:
+
+```bash
+./gradlew :kotlin:run
+```
+
+## Branch Strategy
+
+- **master**: Main stable branch
+- **develop**: Development branch
+
+CI runs on both branches for all pushes and pull requests.

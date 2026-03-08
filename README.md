@@ -1,6 +1,6 @@
 # Sudoku Solver
 
-A high-performance Sudoku solver implemented in Kotlin and Java, featuring multiple constraint propagation strategies and backtracking with JMH benchmarking capabilities.
+A high-performance Sudoku solver implemented in Kotlin, featuring multiple constraint propagation strategies and backtracking with JMH benchmarking capabilities.
 
 ## Overview
 
@@ -12,7 +12,6 @@ This project implements a fast Sudoku solver that combines:
 
 ## Features
 
-- **Multiple Solver Implementations**: Both Kotlin and Java versions for comparison
 - **Efficient Candidate Management**: Uses bitmask patterns (9-bit integers) to represent possible values
 - **Three Elimination Techniques**:
   - *Simple Eliminator*: Removes confirmed values from peer cells
@@ -25,7 +24,7 @@ This project implements a fast Sudoku solver that combines:
 
 ```
 sudoku-solver/
-├── kotlin/                    # Kotlin implementation (primary)
+├── kotlin/                    # Kotlin implementation
 │   ├── src/main/
 │   │   └── java/will/sudoku/solver/
 │   │       ├── Board.kt              # Board state & candidate patterns
@@ -40,30 +39,20 @@ sudoku-solver/
 │   │       └── BoardReader.kt         # Parse boards from files/strings
 │   ├── src/test/             # JUnit 5 tests
 │   └── src/jmh/              # JMH benchmarks
-└── java/                     # Java implementation (legacy)
-    ├── src/main/             # Equivalent Java classes
-    ├── src/test/             # JUnit 5 tests
-    └── src/jmh/              # JMH benchmarks
 ```
 
 ## Building
 
 ### Prerequisites
 
-- JDK 11 or higher
+- JDK 21 or higher
 - Gradle 7.x+ (or use the included Gradle wrapper)
 
 ### Build Commands
 
 ```bash
-# Build both modules
+# Build the project
 ./gradlew build
-
-# Build only the Kotlin module
-./gradlew :kotlin:build
-
-# Build only the Java module
-./gradlew :java:build
 
 # Clean build artifacts
 ./gradlew clean
@@ -74,12 +63,6 @@ sudoku-solver/
 ```bash
 # Run all tests
 ./gradlew test
-
-# Run Kotlin tests only
-./gradlew :kotlin:test
-
-# Run Java tests only
-./gradlew :java:test
 ```
 
 Tests use parameterized board files in `kotlin/src/test/resources/solver/`. Boards are read in pairs:
@@ -89,11 +72,8 @@ Tests use parameterized board files in `kotlin/src/test/resources/solver/`. Boar
 ## Running Benchmarks
 
 ```bash
-# Run JMH benchmarks (Kotlin module)
+# Run JMH benchmarks
 ./gradlew :kotlin:jmh
-
-# Run JMH benchmarks (Java module)
-./gradlew :java:jmh
 ```
 
 The benchmarks test solving performance with different `shortCircuitThreshold` values (0, 3, 6, 9) across multiple puzzle files (g1-g4).
@@ -199,8 +179,8 @@ object Settings {
 ### Development Workflow
 
 1. Fork the repository and create a feature branch
-2. Make your changes in the `kotlin` module (primary implementation)
-3. Run tests: `./gradlew :kotlin:test`
+2. Make your changes
+3. Run tests: `./gradlew test`
 4. Run benchmarks if performance changes: `./gradlew :kotlin:jmh`
 5. Submit a pull request with clear description of changes
 
@@ -237,7 +217,12 @@ val eliminators = listOf(
 
 ## Performance
 
-### Benchmark Results
+Benchmark results test different `shortCircuitThreshold` values:
+- `0`: Apply exclusion eliminator to all groups (most thorough, slower)
+- `3-6`: Skip groups with many known values (balanced)
+- `9`: Skip exclusion eliminator entirely (faster, but may miss constraints)
+
+Higher thresholds improve speed on simple puzzles but may increase backtracking on complex ones.
 
 Benchmarks test different `shortCircuitThreshold` values:
 - `0`: Apply exclusion eliminator to all groups (most thorough, slower)
@@ -246,12 +231,7 @@ Benchmarks test different `shortCircuitThreshold` values:
 
 Higher thresholds improve speed on simple puzzles but may increase backtracking on complex ones.
 
-### Kotlin vs Java Performance
-
-The Kotlin and Java implementations are functionally equivalent. Performance differences are typically minimal, with Kotlin often having slight advantages due to:
-- More concise code reducing bytecode size
-- Inline optimizations for certain operations
-- Functional programming constructs
+### Performance
 
 ### Optimization Tips
 

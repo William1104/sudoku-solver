@@ -24,6 +24,16 @@ dependencies {
 
 tasks.jar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    manifest {
+        attributes("Main-Class" to "will.sudoku.solver.Solver")
+    }
+}
+
+tasks.register<JavaExec>("run") {
+    group = "application"
+    description = "Run the Sudoku solver with a sample puzzle"
+    classpath = sourceSets.main.get().runtimeClasspath
+    mainClass.set("will.sudoku.solver.Solver")
 }
 
 tasks.test {
