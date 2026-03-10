@@ -6,17 +6,16 @@ A high-performance Sudoku solver implemented in Kotlin, featuring multiple const
 
 This project implements a fast Sudoku solver that combines:
 - **Bitmask-based candidate representation** for efficient state management
-- **Four elimination strategies** for constraint propagation
+- **Three elimination strategies** for constraint propagation
 - **Backtracking search** with minimum remaining values heuristic
 - **JMH benchmarks** for performance validation
 
 ## Features
 
 - **Efficient Candidate Management**: Uses bitmask patterns (9-bit integers) to represent possible values
-- **Four Elimination Techniques**:
+- **Three Elimination Techniques**:
   - *Simple Eliminator*: Removes confirmed values from peer cells
   - *Group Eliminator*: Detects naked pairs/triples (naked subsets)
-  - *Hidden Subset Eliminator*: Detects hidden pairs/triples/quads
   - *Exclusion Eliminator*: Detects hidden singles
 - **Configurable Thresholds**: The exclusion eliminator can skip groups with too many known values
 - **Benchmarking**: JMH microbenchmarks for performance analysis
@@ -36,7 +35,6 @@ sudoku-solver/
 │   │       ├── CandidateEliminator.kt # Interface for eliminators
 │   │       ├── SimpleCandidateEliminator.kt
 │   │       ├── GroupCandidateEliminator.kt
-│   │       ├── HiddenSubsetCandidateEliminator.kt
 │   │       ├── ExclusionCandidateEliminator.kt
 │   │       └── BoardReader.kt         # Parse boards from files/strings
 │   ├── src/test/             # JUnit 5 tests
@@ -145,25 +143,11 @@ The solver uses bitmask patterns to efficiently track possible values for each c
 // All candidates: 0b111111111 (all 9 bits)
 ```
 
-### Hidden Subsets
-
-A **hidden subset** occurs when N candidates appear in exactly N cells within a group (row, column, or region), even if those cells also contain other candidates. This allows elimination of all other candidates from those N cells.
-
-**Example (Hidden Pair)**: If candidates {2,3} appear only in cells A and B in a row (even if A and B have other candidates), then cells A and B MUST be 2 or 3, so all other candidates can be removed.
-
-The `HiddenSubsetCandidateEliminator` detects:
-- Hidden pairs (2 candidates in 2 cells)
-- Hidden triples (3 candidates in 3 cells)
-- Hidden quads (4 candidates in 4 cells)
-
-Hidden subsets complement naked subsets by finding constraints from the candidate perspective rather than the cell perspective.
-
 ### Solver Algorithm
 
 1. **Constraint Propagation**: Apply all eliminators until no more changes
    - `SimpleCandidateEliminator`: Remove known values from peers
    - `GroupCandidateEliminator`: Find naked pairs/triples in groups
-   - `HiddenSubsetCandidateEliminator`: Find hidden pairs/triples/quads in groups
    - `ExclusionCandidateEliminator`: Find hidden singles in groups
 
 2. **Select Cell**: Choose the cell with minimum remaining candidates (MRV heuristic)
@@ -217,7 +201,6 @@ class MyEliminator : CandidateEliminator {
 val eliminators = listOf(
     simpleCandidateEliminator,
     groupCandidateEliminator,
-    hiddenSubsetCandidateEliminator,
     exclusionCandidateEliminator,
     myEliminator  // Add here
 )
@@ -240,6 +223,15 @@ Benchmark results test different `shortCircuitThreshold` values:
 - `9`: Skip exclusion eliminator entirely (faster, but may miss constraints)
 
 Higher thresholds improve speed on simple puzzles but may increase backtracking on complex ones.
+
+Benchmarks test different `shortCircuitThreshold` values:
+- `0`: Apply exclusion eliminator to all groups (most thorough, slower)
+- `3-6`: Skip groups with many known values (balanced)
+- `9`: Skip exclusion eliminator entirely (faster, but may miss constraints)
+
+Higher thresholds improve speed on simple puzzles but may increase backtracking on complex ones.
+
+### Performance
 
 ### Optimization Tips
 
