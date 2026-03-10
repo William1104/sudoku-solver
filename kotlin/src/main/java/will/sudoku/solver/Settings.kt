@@ -8,8 +8,9 @@ object Settings {
     val symbols: CharArray = charArrayOf('.', '1', '2', '3', '4', '5', '6', '7', '8', '9')
     val simpleCandidateEliminator = SimpleCandidateEliminator()
     val groupCandidateEliminator = GroupCandidateEliminator()
+    val hiddenSubsetCandidateEliminator = HiddenSubsetCandidateEliminator()
     val exclusionCandidateEliminator = ExclusionCandidateEliminator(9)
-    val eliminators = listOf(simpleCandidateEliminator, groupCandidateEliminator, exclusionCandidateEliminator)
+    val eliminators = listOf(simpleCandidateEliminator, groupCandidateEliminator, hiddenSubsetCandidateEliminator, exclusionCandidateEliminator)
 
     init {
         require(regionSize * regionSize == size) { "given size [$size] cannot be properly sqrt into another integer" }
