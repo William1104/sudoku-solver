@@ -45,7 +45,7 @@ data class SolverMetrics(
         appendLine("=== Solver Metrics ===")
         appendLine()
         appendLine("Overall Performance:")
-        appendLine("  Total Solve Time: ${formatTime(totalSolveTimeNanos)}")
+        appendLine("  Total Solve Time: ${formatTime(totalSolveTimeNanos.toDouble())}")
         appendLine("  Backtracking Attempts: $backtrackingCount")
         appendLine("  Max Recursion Depth: $maxRecursionDepth")
         appendLine("  Constraint Propagation Passes: $propagationPasses")
@@ -60,7 +60,7 @@ data class SolverMetrics(
                     appendLine("  $eliminator:")
                     appendLine("    Eliminations: ${metrics.eliminations}")
                     appendLine("    Passes: ${metrics.passes}")
-                    appendLine("    Time: ${formatTime(metrics.totalTimeNanos)}")
+                    appendLine("    Time: ${formatTime(metrics.totalTimeNanos.toDouble())}")
                 }
         }
     }
@@ -73,7 +73,7 @@ data class SolverMetrics(
         appendLine()
 
         appendLine("Overall Performance:")
-        appendLine("  Total Solve Time: ${formatTime(totalSolveTimeNanos)}")
+        appendLine("  Total Solve Time: ${formatTime(totalSolveTimeNanos.toDouble())}")
         appendLine("    (${totalSolveTimeNanos / 1_000_000.0} ms)")
         appendLine("  Backtracking Attempts: $backtrackingCount")
         appendLine("  Max Recursion Depth: $maxRecursionDepth")
@@ -101,7 +101,7 @@ data class SolverMetrics(
                     appendLine("  $eliminator:")
                     appendLine("    Eliminations: ${metrics.eliminations} (${"%.2f".format(eliminationPercent)}%)")
                     appendLine("    Passes: ${metrics.passes}")
-                    appendLine("    Time: ${formatTime(metrics.totalTimeNanos)} (${"%.1f".format(timePercent)}%)")
+                    appendLine("    Time: ${formatTime(metrics.totalTimeNanos.toDouble())} (${"%.1f".format(timePercent)}%)")
                     if (metrics.passes > 0) {
                         val avgTimePerPass = metrics.totalTimeNanos / metrics.passes.toDouble()
                         appendLine("    Avg Time/Pass: ${formatTime(avgTimePerPass)}")
@@ -126,7 +126,7 @@ data class SolverMetrics(
      */
     fun toCSV(): String = buildString {
         appendLine("metric,value")
-        appendLine("total_solve_time_ms,${totalSolveTimeNanos / 1_000_000.0}")
+        appendLine("total_solve_time_ms,${totalSolveTimeNanos / 1_000_000}")
         appendLine("backtracking_count,$backtrackingCount")
         appendLine("max_recursion_depth,$maxRecursionDepth")
         appendLine("propagation_passes,$propagationPasses")
@@ -136,7 +136,7 @@ data class SolverMetrics(
             val sanitizedEliminator = eliminator.replace(" ", "_")
             appendLine("${sanitizedEliminator}_eliminations,${metrics.eliminations}")
             appendLine("${sanitizedEliminator}_passes,${metrics.passes}")
-            appendLine("${sanitizedEliminator}_time_ms,${metrics.totalTimeNanos / 1_000_000.0}")
+            appendLine("${sanitizedEliminator}_time_ms,${metrics.totalTimeNanos / 1_000_000}")
         }
     }
 

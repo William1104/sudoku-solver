@@ -96,7 +96,7 @@ object MetricsExample {
             println("✓ Solved by constraint propagation alone (no backtracking)")
             println("  This puzzle is suitable for the 'Easy' difficulty category")
         } else {
-            println("Required $backtrackingCount backtracking attempts")
+            println("Required ${metrics.backtrackingCount} backtracking attempts")
             if (metrics.backtrackingCount < 100) {
                 println("  Low backtracking - puzzle is likely 'Easy' to 'Medium'")
             } else if (metrics.backtrackingCount < 1000) {

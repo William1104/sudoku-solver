@@ -110,10 +110,10 @@ class HiddenSubsetCandidateEliminator : CandidateEliminator {
             // Check if the cells count equals the subset size
             if (cellsWithCandidates.size == subsetSize) {
                 // Found a hidden subset! Remove all other candidates from these cells
-                val candidatesToRemove = Board.masks
-                    .mapIndexedNotNull { index, mask ->
-                        if (mask !in candidateCombo.map { Board.masks[it - 1] }) mask else null
-                    }
+                val comboMasks = candidateCombo.map { Board.masks[it - 1] }
+                val candidatesToRemove = Board.masks.filterNot { mask ->
+                    mask in comboMasks
+                }
 
                 for (cell in cellsWithCandidates) {
                     for (candidateToRemove in candidatesToRemove) {

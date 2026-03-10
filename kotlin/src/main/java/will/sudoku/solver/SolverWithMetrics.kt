@@ -242,7 +242,7 @@ private class SolverMetricsBuilder(
     }
 
     fun build(totalSolveTimeNanos: Long): SolverMetrics {
-        val finalEliminatorMetrics = eliminatorMetrics.mapValues { it.build() }
+        val finalEliminatorMetrics: Map<String, EliminatorMetrics> = eliminatorMetrics.mapValues { it.value.build() }
         return SolverMetrics(
             totalSolveTimeNanos = totalSolveTimeNanos,
             backtrackingCount = backtrackingCount,
