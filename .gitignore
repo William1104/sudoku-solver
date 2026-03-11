@@ -7,3 +7,5 @@
 **/build/
 java/bin/
 kotlin/bin/
+build-cache/
+.claude/settings.local.json
